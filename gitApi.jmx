@@ -142,9 +142,47 @@
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
             <stringProp name="script">var response = eval(&apos;(&apos; + prev.getResponseDataAsString() + &apos;)&apos;);
-OUT.println(JSON.stringify(response));</stringProp>
+//OUT.println(JSON.stringify(response, null, 1));
+OUT.println(&quot;number of items (aka as total_count): &quot; + response.items.length)
+
+var endOfItems = false;
+var indexOfItem = 0;
+
+if (indexOfItem &lt; response.items.length) {
+	endOfItems = false;
+} else {
+	endOfItems = true;
+}
+vars.put(&quot;indexOfItem&quot;, 0);
+vars.put(&quot;items&quot;, JSON.stringify(response.items));
+vars.put(&quot;endOfItems&quot;, endOfItems);</stringProp>
             <stringProp name="scriptLanguage">javascript</stringProp>
           </JSR223PostProcessor>
+          <hashTree/>
+        </hashTree>
+        <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="While Controller" enabled="true">
+          <stringProp name="WhileController.condition">${__javaScript(!${endOfItems})}</stringProp>
+        </WhileController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="fetch each git project" enabled="true">
+            <stringProp name="cacheKey"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">var indexOfItem = vars.get(&quot;indexOfItem&quot;);
+var items = vars.get(&quot;items&quot;);
+var endOfItems = vars.get(&quot;endOfItems&quot;);
+
+items = eval(&apos;(&apos; + items + &apos;)&apos;);
+if (indexOfItem &lt; items.length-1) {
+	endOfItems = false;
+} else {
+	endOfItems = true;
+}
+OUT.println(indexOfItem);
+vars.put(&quot;indexOfItem&quot;, ++indexOfItem);
+vars.put(&quot;endOfItems&quot;, endOfItems);</stringProp>
+            <stringProp name="scriptLanguage">javascript</stringProp>
+          </JSR223Sampler>
           <hashTree/>
         </hashTree>
       </hashTree>
